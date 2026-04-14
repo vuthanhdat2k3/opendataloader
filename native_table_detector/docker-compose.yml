@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  native-table-detector:
+    build: .
+    volumes:
+      - ./:/app
+    command: python scripts/run_pipeline.py --help
+

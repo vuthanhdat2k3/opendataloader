@@ -1,0 +1,4 @@
+extends: default.yaml
+save_debug_artifacts: true
+ocr_workers: 1
+

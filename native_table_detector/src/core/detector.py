@@ -35,20 +35,90 @@ class NativePDFTableDetector:
                 # Bỏ qua cụm text thẳng ở hàm này
                 continue
             else:
-                # Tính Oriented Bounding Box cho cụm có padding 10px để lấy trọn viền đồ họa mảnh
-                obb = self._compute_obb(page, spans, angle, padding=30)
+                # Dual OBB:
+                # - loose: robust OCR crop (includes nearby table lines/graphics)
+                # - tight: minimal replacement/redaction box
+                obb_loose = self._compute_obb(
+                    page,
+                    spans,
+                    angle,
+                    include_drawings=True,
+                    padding_mode="loose",
+                    padding=30,
+                )
+                obb_tight = self._compute_obb(
+                    page,
+                    spans,
+                    angle,
+                    # Keep vector border lines for tight box too, but with tight margins.
+                    include_drawings=True,
+                    padding_mode="tight",
+                    padding=0,
+                )
                 
                 # Render và cắt crop kéo thẳng
-                patch_before, patch_after = self._extract_cells_from_rotated(page, obb, angle)
+                patch_before, patch_after = self._extract_cells_from_rotated(
+                    page, obb_loose, angle
+                )
                 
                 results["rotated_tables"].append({
-                    "obb": obb,
+                    # Backward-compatible alias: keep obb as OCR crop box.
+                    "obb": obb_loose,
+                    "obb_loose": obb_loose,
+                    "obb_tight": obb_tight,
                     "angle": angle,
                     "spans": spans,
                     "patch_image": patch_after,
                     "patch_before_rotate": patch_before,
                 })
+        results["rotated_tables"] = self._deduplicate_rotated_tables(
+            results["rotated_tables"]
+        )
         return results
+
+    def _deduplicate_rotated_tables(self, tables, iou_threshold=0.6):
+        """Remove duplicate detections for the same physical table."""
+        if not tables:
+            return []
+
+        def to_aabb(obb):
+            cx, cy, w, h = obb["cx"], obb["cy"], obb["w"], obb["h"]
+            return [cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2]
+
+        def iou(box_a, box_b):
+            x0 = max(box_a[0], box_b[0])
+            y0 = max(box_a[1], box_b[1])
+            x1 = min(box_a[2], box_b[2])
+            y1 = min(box_a[3], box_b[3])
+            if x1 <= x0 or y1 <= y0:
+                return 0.0
+            inter = (x1 - x0) * (y1 - y0)
+            area_a = (box_a[2] - box_a[0]) * (box_a[3] - box_a[1])
+            area_b = (box_b[2] - box_b[0]) * (box_b[3] - box_b[1])
+            union = area_a + area_b - inter
+            return inter / union if union > 0 else 0.0
+
+        sorted_tables = sorted(
+            tables,
+            key=lambda t: (
+                len(t.get("spans", [])),
+                t.get("obb", {}).get("w", 0.0) * t.get("obb", {}).get("h", 0.0),
+            ),
+            reverse=True,
+        )
+
+        kept = []
+        kept_boxes = []
+        for table in sorted_tables:
+            obb = table.get("obb")
+            if not obb:
+                continue
+            box = to_aabb(obb)
+            if any(iou(box, existing) >= iou_threshold for existing in kept_boxes):
+                continue
+            kept.append(table)
+            kept_boxes.append(box)
+        return kept
 
     def _group_spans_by_angle_and_space(self, page):
         blocks = page.get_text("rawdict", flags=0)["blocks"]
@@ -109,7 +179,15 @@ class NativePDFTableDetector:
             
         return groups
 
-    def _compute_obb(self, page, spans, angle_deg, padding=10):
+    def _compute_obb(
+        self,
+        page,
+        spans,
+        angle_deg,
+        padding=10,
+        include_drawings=True,
+        padding_mode="loose",
+    ):
         angle_rad = math.radians(-angle_deg)
         cos_a, sin_a = math.cos(angle_rad), math.sin(angle_rad)
         all_pts = []
@@ -117,13 +195,19 @@ class NativePDFTableDetector:
             x0, y0, x1, y1 = s["bbox"]
             all_pts += [(x0,y0), (x1,y0), (x1,y1), (x0,y1)]
 
-        if spans:
+        if spans and include_drawings:
             span_x0 = min(s["bbox"][0] for s in spans)
             span_y0 = min(s["bbox"][1] for s in spans)
             span_x1 = max(s["bbox"][2] for s in spans)
             span_y1 = max(s["bbox"][3] for s in spans)
             span_rect = fitz.Rect(span_x0, span_y0, span_x1, span_y1)
-            draw_margin = max(float(padding), 20.0)
+            if padding_mode == "tight":
+                span_w = max(1.0, span_rect.width)
+                span_h = max(1.0, span_rect.height)
+                # Small margin just to include outer border strokes.
+                draw_margin = min(8.0, max(2.0, max(span_w, span_h) * 0.02))
+            else:
+                draw_margin = max(float(padding), 20.0)
             expanded_span_rect = fitz.Rect(
                 max(0.0, span_rect.x0 - draw_margin),
                 max(0.0, span_rect.y0 - draw_margin),
@@ -145,16 +229,25 @@ class NativePDFTableDetector:
                     (draw_rect.x1, draw_rect.y1),
                     (draw_rect.x0, draw_rect.y1),
                 ]
+
+        if not all_pts:
+            return {"cx": 0.0, "cy": 0.0, "w": 0.0, "h": 0.0, "angle": angle_deg}
             
         rot = [(x*cos_a - y*sin_a, x*sin_a + y*cos_a) for x, y in all_pts]
         min_u = min(p[0] for p in rot)
         max_u = max(p[0] for p in rot)
         min_v = min(p[1] for p in rot)
         max_v = max(p[1] for p in rot)
-        
-        # Thêm padding để lấy trọn lề đồ họa kẻ bảng (Khắc phục nhược điểm C & D)
-        content_span = max(max_u - min_u, max_v - min_v)
-        effective_padding = max(float(padding), content_span * 0.18)
+
+        content_w = max_u - min_u
+        content_h = max_v - min_v
+        content_span = max(content_w, content_h)
+        if padding_mode == "tight":
+            # Keep box close to table content.
+            effective_padding = min(8.0, max(2.0, content_span * 0.025, float(padding)))
+        else:
+            # Loose mode keeps current behavior for OCR robustness.
+            effective_padding = max(float(padding), content_span * 0.18)
         min_u -= effective_padding
         max_u += effective_padding
         min_v -= effective_padding
@@ -205,12 +298,19 @@ class NativePDFTableDetector:
                 [cx - out_w/2*cos_a - out_h/2*sin_a, cy - out_w/2*sin_a + out_h/2*cos_a],
             ])
 
-            corners_dst = np.float32([
-                [0, 0], [out_w, 0], [out_w, out_h], [0, out_h]
-            ])
+            dst_w = max(2, int(math.ceil(out_w)) + 2)
+            dst_h = max(2, int(math.ceil(out_h)) + 2)
+            corners_dst = np.float32(
+                [[1, 1], [dst_w - 2, 1], [dst_w - 2, dst_h - 2], [1, dst_h - 2]]
+            )
 
             matrix = cv2.getPerspectiveTransform(corners_src, corners_dst)
-            return cv2.warpPerspective(img, matrix, (int(out_w), int(out_h)), borderValue=(255, 255, 255))
+            return cv2.warpPerspective(
+                img,
+                matrix,
+                (dst_w, dst_h),
+                borderValue=(255, 255, 255),
+            )
 
         # Ảnh crop trước deskew để phục vụ debug/so sánh.
         before_deskew = warp_with_ccw_angle(0.0)

@@ -15,7 +15,10 @@ import numpy as np
 import opendataloader_pdf
 from PIL import Image
 
-from native_table_detector.detector import NativePDFTableDetector
+from native_table_detector.src.core.detector import NativePDFTableDetector
+from native_table_detector.src.pipeline.config import PipelineConfig
+from native_table_detector.src.pipeline.contracts import PipelineRequest
+from native_table_detector.src.pipeline.factory import PipelineFactory
 
 
 RUNS_DIR = Path("output/gradio_runs")
@@ -42,7 +45,7 @@ def _pdf_iframe(path: Path | None, empty_text: str) -> str:
 
     return (
         "<embed "
-        f"src=\"data:application/pdf;base64,{pdf_base64}\" "
+        f'src="data:application/pdf;base64,{pdf_base64}" '
         "type='application/pdf' width='100%' height='640px' "
         "style='border:1px solid #ddd;border-radius:8px;'></embed>"
     )
@@ -109,11 +112,15 @@ def _parse_page_selection(page_selection: str, total_pages: int) -> list[int]:
 
     valid_pages = sorted(page for page in pages if 1 <= page <= total_pages)
     if not valid_pages:
-        raise ValueError(f"No valid pages found in '{page_selection}'. Total pages: {total_pages}.")
+        raise ValueError(
+            f"No valid pages found in '{page_selection}'. Total pages: {total_pages}."
+        )
     return valid_pages
 
 
-def _extract_pages(input_pdf: Path, pages_spec: str, run_dir: Path, stem: str) -> tuple[Path, list[int]]:
+def _extract_pages(
+    input_pdf: Path, pages_spec: str, run_dir: Path, stem: str
+) -> tuple[Path, list[int]]:
     src_doc = fitz.open(str(input_pdf))
     try:
         selected_pages = _parse_page_selection(pages_spec, src_doc.page_count)
@@ -124,7 +131,9 @@ def _extract_pages(input_pdf: Path, pages_spec: str, run_dir: Path, stem: str) -
         out_doc = fitz.open()
         try:
             for page_number in selected_pages:
-                out_doc.insert_pdf(src_doc, from_page=page_number - 1, to_page=page_number - 1)
+                out_doc.insert_pdf(
+                    src_doc, from_page=page_number - 1, to_page=page_number - 1
+                )
             out_doc.save(str(selected_pdf))
         finally:
             out_doc.close()
@@ -142,6 +151,7 @@ def _run_rotated_table_deskew(
     patched_pdf = run_dir / f"{input_pdf.stem}_patched.pdf"
     if not enabled:
         import shutil
+
         shutil.copy2(input_pdf, patched_pdf)
         return "Rotated-table deskew: off", "", 0, patched_pdf
 
@@ -183,40 +193,50 @@ def _run_rotated_table_deskew(
                 if isinstance(patch_before, np.ndarray) and patch_before.size > 0:
                     out_before_name = f"page_{page_number}_table_{t_idx}_angle_{angle:.1f}_before_rotate.png"
                     out_before_path = rotated_dir / out_before_name
-                    Image.fromarray(patch_before.astype("uint8"), mode="RGB").save(out_before_path)
+                    Image.fromarray(patch_before.astype("uint8"), mode="RGB").save(
+                        out_before_path
+                    )
 
                 # >>> PATHING THE PDF <<<
                 # Tính toạ độ các góc gốc của bảng để xoá (Redact)
-                cx, cy, tw, th = table["obb"]["cx"], table["obb"]["cy"], table["obb"]["w"], table["obb"]["h"]
+                cx, cy, tw, th = (
+                    table["obb"]["cx"],
+                    table["obb"]["cy"],
+                    table["obb"]["w"],
+                    table["obb"]["h"],
+                )
                 import math
+
                 a_rad = math.radians(-angle)
                 cos_a, sin_a = math.cos(a_rad), math.sin(a_rad)
-                
+
                 # 4 góc xoay của cái bảng nghiêng ban đầu
-                ul_x = cx - tw/2 * cos_a + th/2 * sin_a
-                ul_y = cy - tw/2 * sin_a - th/2 * cos_a
-                ur_x = cx + tw/2 * cos_a + th/2 * sin_a
-                ur_y = cy + tw/2 * sin_a - th/2 * cos_a
-                lr_x = cx + tw/2 * cos_a - th/2 * sin_a
-                lr_y = cy + tw/2 * sin_a + th/2 * cos_a
-                ll_x = cx - tw/2 * cos_a - th/2 * sin_a
-                ll_y = cy - tw/2 * sin_a + th/2 * cos_a
-                
+                ul_x = cx - tw / 2 * cos_a + th / 2 * sin_a
+                ul_y = cy - tw / 2 * sin_a - th / 2 * cos_a
+                ur_x = cx + tw / 2 * cos_a + th / 2 * sin_a
+                ur_y = cy + tw / 2 * sin_a - th / 2 * cos_a
+                lr_x = cx + tw / 2 * cos_a - th / 2 * sin_a
+                lr_y = cy + tw / 2 * sin_a + th / 2 * cos_a
+                ll_x = cx - tw / 2 * cos_a - th / 2 * sin_a
+                ll_y = cy - tw / 2 * sin_a + th / 2 * cos_a
+
                 quad = fitz.Quad(
                     fitz.Point(ul_x, ul_y),
                     fitz.Point(ur_x, ur_y),
                     fitz.Point(ll_x, ll_y),
-                    fitz.Point(lr_x, lr_y)
+                    fitz.Point(lr_x, lr_y),
                 )
-                
+
                 # Bôi sạch nội dung bảng rác
                 page.add_redact_annot(quad, fill=(1, 1, 1))
                 page.apply_redactions()
-                
+
                 # Chèn ảnh bảng thẳng tắp vào
-                upright_rect = fitz.Rect(cx - tw/2, cy - th/2, cx + tw/2, cy + th/2)
+                upright_rect = fitz.Rect(
+                    cx - tw / 2, cy - th / 2, cx + tw / 2, cy + th / 2
+                )
                 page.insert_image(upright_rect, filename=str(out_after_path))
-                
+
                 # Mở rộng bounds trang nếu cái bảng thẳng nó phình ra ngoài (nằm ngang)
                 new_box = page.rect | upright_rect
                 page.set_mediabox(new_box)
@@ -227,11 +247,15 @@ def _run_rotated_table_deskew(
                         "page": page_number,
                         "table_index": t_idx,
                         "angle": angle,
-                        "image_before_rotate": str(out_before_path) if out_before_path else None,
+                        "image_before_rotate": str(out_before_path)
+                        if out_before_path
+                        else None,
                         "image_after_rotate": str(out_after_path),
                     }
                 )
-                summary_rows.append(f"Page {page_number} | Table {t_idx} | angle={angle:.1f}°")
+                summary_rows.append(
+                    f"Page {page_number} | Table {t_idx} | angle={angle:.1f}°"
+                )
                 before_html = (
                     (
                         "<div><div style='font-size:12px;color:#666;margin-bottom:4px'>Before rotate</div>"
@@ -256,18 +280,131 @@ def _run_rotated_table_deskew(
         doc.close()
 
     manifest_path = rotated_dir / "manifest.json"
-    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
 
     if total == 0:
         import shutil
+
         shutil.copy2(input_pdf, patched_pdf)
-        return "Rotated-table deskew: enabled, no rotated table detected", "", 0, patched_pdf
+        return (
+            "Rotated-table deskew: enabled, no rotated table detected",
+            "",
+            0,
+            patched_pdf,
+        )
 
     summary = (
         f"Rotated-table deskew: detected {total} table(s). "
         f"Saved to {rotated_dir}.\n" + "\n".join(summary_rows)
     )
     return summary, "\n".join(html_blocks), total, patched_pdf
+
+
+def _run_hybrid_rotated_table_ocr(
+    input_pdf: Path,
+    run_dir: Path,
+    original_page_numbers: list[int],
+    enabled: bool,
+) -> tuple[str, str, int, dict]:
+    if not enabled:
+        return "Hybrid OCR: off", "", 0, {}
+
+    rotated_dir = run_dir / "rotated_tables_hybrid"
+    rotated_dir.mkdir(parents=True, exist_ok=True)
+
+    processor = HybridTableProcessor(spatial_dist_threshold=100)
+
+    doc = fitz.open(str(input_pdf))
+    summary_rows: list[str] = []
+    html_blocks: list[str] = []
+    total = 0
+    all_results = {"pages": []}
+
+    try:
+        for local_idx in range(len(doc)):
+            page = doc[local_idx]
+            page_number = (
+                original_page_numbers[local_idx]
+                if local_idx < len(original_page_numbers)
+                else local_idx + 1
+            )
+
+            page_result = processor.process_page(page)
+            page_result["page_number"] = page_number
+            all_results["pages"].append(page_result)
+
+            rotated_tables = page_result.get("rotated_tables", [])
+            if not rotated_tables:
+                continue
+
+            for t_idx, table in enumerate(rotated_tables, start=1):
+                patch = table.get("patch_image")
+                angle = float(table.get("angle", 0.0))
+                ocr_md = table.get("ocr_markdown", "")
+                ocr_conf = float(table.get("ocr_confidence", 0.0))
+
+                if not isinstance(patch, np.ndarray) or patch.size == 0:
+                    continue
+
+                out_after_name = (
+                    f"page_{page_number}_table_{t_idx}_angle_{angle:.1f}_ocr.png"
+                )
+                out_after_path = rotated_dir / out_after_name
+                Image.fromarray(patch.astype("uint8"), mode="RGB").save(out_after_path)
+
+                summary_rows.append(
+                    f"Page {page_number} | Table {t_idx} | angle={angle:.1f}° | conf={ocr_conf:.2f}"
+                )
+
+                before_patch = table.get("patch_before_rotate")
+                before_html = ""
+                if isinstance(before_patch, np.ndarray) and before_patch.size > 0:
+                    out_before_name = (
+                        f"page_{page_number}_table_{t_idx}_before_rotate.png"
+                    )
+                    out_before_path = rotated_dir / out_before_name
+                    Image.fromarray(before_patch.astype("uint8"), mode="RGB").save(
+                        out_before_path
+                    )
+                    before_html = (
+                        "<div><div style='font-size:12px;color:#666;margin-bottom:4px'>Before rotate</div>"
+                        f"<img src='{_to_file_url(out_before_path)}' style='max-width:100%;border:1px solid #ddd;border-radius:6px'/></div>"
+                    )
+
+                after_html = (
+                    "<div><div style='font-size:12px;color:#666;margin-bottom:4px'>After OCR</div>"
+                    f"<img src='{_to_file_url(out_after_path)}' style='max-width:100%;border:1px solid #ddd;border-radius:6px'/></div>"
+                )
+
+                table_html = (
+                    "<div style='margin-bottom:12px'>"
+                    f"<div><b>Page {page_number} - Table {t_idx}</b> | angle={angle:.1f}° | conf={ocr_conf:.2f}</div>"
+                    f"<pre style='background:#f5f5f5;padding:8px;border-radius:4px;overflow-x:auto'>{ocr_md}</pre>"
+                    "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px;margin-top:8px'>"
+                    f"{before_html}{after_html}</div></div>"
+                )
+                html_blocks.append(table_html)
+                total += 1
+
+    finally:
+        doc.close()
+
+    export_results_to_json(all_results, rotated_dir / "hybrid_results.json")
+
+    markdown_output = generate_markdown_from_hybrid_results(all_results)
+    markdown_path = rotated_dir / "output.md"
+    markdown_path.write_text(markdown_output, encoding="utf-8")
+
+    if total == 0:
+        return "Hybrid OCR: enabled, no rotated table detected", "", 0, all_results
+
+    summary = (
+        f"Hybrid OCR: detected {total} table(s). Saved to {rotated_dir}.\n"
+        + "\n".join(summary_rows)
+    )
+    return summary, "\n".join(html_blocks), total, all_results
 
 
 def process_pdf(
@@ -277,6 +414,7 @@ def process_pdf(
     use_hybrid_docling_fast: bool,
     hybrid_url: str,
     enable_rotated_table_deskew: bool,
+    enable_hybrid_ocr: bool,
 ):
     file_obj = str(file_obj) if file_obj else None
     pdf_url = (pdf_url or "").strip()
@@ -332,63 +470,69 @@ def process_pdf(
             f"Input preparation failed: {exc}",
         )
 
-    deskew_summary = "Rotated-table deskew: off"
-    deskew_html = ""
-    target_pdf_for_odl = processing_input_pdf
     try:
-        deskew_summary, deskew_html, _, target_pdf_for_odl = _run_rotated_table_deskew(
-            processing_input_pdf,
-            run_dir,
-            selected_pages,
-            enable_rotated_table_deskew,
+        start = time.perf_counter()
+        pipeline = PipelineFactory.build(
+            PipelineConfig(
+                angle_threshold=2.0,
+                overlap_threshold=0.08,
+                save_debug_artifacts=True,
+            )
         )
+        pipeline_result = pipeline.run(
+            PipelineRequest(
+                pdf_path=processing_input_pdf,
+                output_dir=run_dir,
+                angle_threshold=2.0,
+                overlap_threshold=0.08,
+                save_debug_artifacts=True,
+            )
+        )
+        elapsed = time.perf_counter() - start
     except Exception as exc:
-        deskew_summary = f"Rotated-table deskew failed: {exc}"
-        deskew_html = ""
-        import shutil
-        target_pdf_for_odl = run_dir / f"{processing_input_pdf.stem}_patched.pdf"
-        shutil.copy2(processing_input_pdf, target_pdf_for_odl)
+        return (
+            str(saved_input_pdf),
+            None,
+            _pdf_iframe(None, "Annotated PDF preview will appear here."),
+            "",
+            "",
+            "",
+            "",
+            f"Pipeline failed: {exc}",
+        )
 
-    start = time.perf_counter()
-    convert_kwargs = {
-        "input_path": str(target_pdf_for_odl),
-        "output_dir": str(run_dir),
-        "format": "json,html,markdown,pdf",
-    }
-    if use_hybrid_docling_fast:
-        convert_kwargs["hybrid"] = "docling-fast"
-        convert_kwargs["hybrid_mode"] = "full"
-        convert_kwargs["hybrid_url"] = hybrid_url or "http://0.0.0.0:5004"
-        convert_kwargs["hybrid_fallback"] = True
-
-    opendataloader_pdf.convert(
-        **convert_kwargs,
+    annotated_pdf = Path(pipeline_result.stage1.annotated_pdf_path)
+    merged_md_path = Path(pipeline_result.stage4.merged_md_path)
+    stage1_html_path = (
+        Path(pipeline_result.stage1.output_dir)
+        / f"{Path(pipeline_result.stage1.input_pdf).stem}.html"
     )
-    elapsed = time.perf_counter() - start
-
-    output_stem = target_pdf_for_odl.stem
-    annotated_pdf = run_dir / f"{output_stem}_annotated.pdf"
-    markdown_path = run_dir / f"{output_stem}.md"
-    html_path = run_dir / f"{output_stem}.html"
-
-    md_text = _read_text(markdown_path)
-    html_text = _read_text(html_path)
+    md_text = _read_text(merged_md_path)
+    html_text = _read_text(stage1_html_path)
     annotated_preview = _pdf_iframe(annotated_pdf, "Annotated PDF was not generated.")
 
-    hybrid_status = (
-        f"docling-fast/full @ {convert_kwargs.get('hybrid_url')}"
-        if use_hybrid_docling_fast
-        else "off"
-    )
+    rotated_blocks = []
+    for item in pipeline_result.stage3.hybrid_results:
+        patch = Path(item.patch_deskewed)
+        if patch.exists():
+            rotated_blocks.append(
+                "<div style='margin-bottom:8px'>"
+                f"<div><b>Detect#{item.detection_id}</b> page={item.page_number}, "
+                f"angle={item.angle:.1f}°, conf={item.ocr_confidence:.2f}</div>"
+                f"<img src='{_to_file_url(patch)}' style='max-width:100%;border:1px solid #ddd;border-radius:6px'/>"
+                "</div>"
+            )
+    rotated_tables_combined_html = "\n".join(rotated_blocks)
+
     status = (
         f"Processed in {elapsed:.2f} seconds. Source={source_name}. "
-        f"Pages={','.join(map(str, selected_pages))}. Hybrid={hybrid_status}. Saved run: {run_dir}. {deskew_summary}"
+        f"Pages={','.join(map(str, selected_pages))}. "
+        f"Saved run: {run_dir}. "
+        f"detected={pipeline_result.stage2.detector_rotated_total}, "
+        f"matched={pipeline_result.stage2.detector_matched_to_odl}, "
+        f"replaced={pipeline_result.stage4.tables_replaced}. "
+        f"Metrics={pipeline_result.metrics}"
     )
-    if not annotated_pdf.exists():
-        status = (
-            f"Processed in {elapsed:.2f} seconds, but annotated PDF was not found. "
-            f"Saved run: {run_dir}"
-        )
 
     return (
         str(saved_input_pdf),
@@ -397,7 +541,7 @@ def process_pdf(
         md_text,
         md_text,
         html_text,
-        deskew_html,
+        rotated_tables_combined_html,
         status,
     )
 
@@ -410,6 +554,7 @@ def clear_ui_cache():
         True,
         "http://0.0.0.0:5004",
         True,
+        False,
         None,
         None,
         _pdf_iframe(None, "Please upload a PDF to preview."),
@@ -437,7 +582,9 @@ def clear_saved_outputs():
 
 with gr.Blocks(title="OpenDataLoader PDF Tester") as demo:
     gr.Markdown("## OpenDataLoader PDF Test UI")
-    gr.Markdown("Upload PDF, run pipeline, then review annotated PDF + Markdown + HTML output.")
+    gr.Markdown(
+        "Upload PDF, run pipeline, then review annotated PDF + Markdown + HTML output."
+    )
 
     with gr.Row(equal_height=True):
         with gr.Column(scale=1):
@@ -463,6 +610,10 @@ with gr.Blocks(title="OpenDataLoader PDF Tester") as demo:
             enable_rotated_table_deskew = gr.Checkbox(
                 label="Detect & Deskew Rotated Tables (native)",
                 value=True,
+            )
+            enable_hybrid_ocr = gr.Checkbox(
+                label="Hybrid OCR for Rotated Tables (Tesseract)",
+                value=False,
             )
             with gr.Row():
                 run_btn = gr.Button("Run Processing", variant="primary", size="lg")
@@ -495,7 +646,15 @@ with gr.Blocks(title="OpenDataLoader PDF Tester") as demo:
     input_pdf.change(fn=_preview_pdf, inputs=input_pdf, outputs=pdf_preview)
     run_btn.click(
         fn=process_pdf,
-        inputs=[input_pdf, pdf_url, page_selection, use_hybrid_docling_fast, hybrid_url, enable_rotated_table_deskew],
+        inputs=[
+            input_pdf,
+            pdf_url,
+            page_selection,
+            use_hybrid_docling_fast,
+            hybrid_url,
+            enable_rotated_table_deskew,
+            enable_hybrid_ocr,
+        ],
         outputs=[
             saved_input,
             output_pdf,
@@ -517,6 +676,7 @@ with gr.Blocks(title="OpenDataLoader PDF Tester") as demo:
             use_hybrid_docling_fast,
             hybrid_url,
             enable_rotated_table_deskew,
+            enable_hybrid_ocr,
             saved_input,
             output_pdf,
             pdf_preview,

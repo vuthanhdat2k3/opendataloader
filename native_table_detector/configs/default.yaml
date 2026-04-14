@@ -1,0 +1,8 @@
+angle_threshold: 2.0
+overlap_threshold: 0.08
+save_debug_artifacts: true
+ocr_lang: vi
+ocr_use_gpu: false
+detector_spatial_dist_threshold: 100.0
+ocr_workers: 1
+
