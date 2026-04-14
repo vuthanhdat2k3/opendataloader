@@ -8,3 +8,14 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Runtime artifacts
+output/
+results/
+native_table_detector/output/
+native_table_detector/data/raw/
+native_table_detector/data/sample/
+
+# Local env files
+.env
+*.env
