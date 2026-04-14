@@ -1,0 +1,678 @@
+{
+  "file name" : "tet_rotated.pdf",
+  "number of pages" : 1,
+  "author" : null,
+  "title" : null,
+  "creation date" : null,
+  "modification date" : null,
+  "kids" : [ {
+    "type" : "table",
+    "id" : 1,
+    "level" : "1",
+    "page number" : 1,
+    "bounding box" : [ 25.841, 6.256, 163.278, 160.845 ],
+    "number of rows" : 12,
+    "number of columns" : 3,
+    "rows" : [ {
+      "type" : "table row",
+      "row number" : 1,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 147.61, 71.795, 160.422 ],
+        "row number" : 1,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 1,
+          "page number" : 1,
+          "bounding box" : [ 28.003, 149.953, 57.818, 159.676 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "468801"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 147.61, 117.324, 160.422 ],
+        "row number" : 1,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 2,
+          "page number" : 1,
+          "bounding box" : [ 73.533, 149.953, 103.348, 159.676 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "345678"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 147.61, 162.431, 160.422 ],
+        "row number" : 1,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 3,
+          "page number" : 1,
+          "bounding box" : [ 119.063, 149.953, 148.878, 159.676 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "123123"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 2,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 134.798, 71.795, 147.61 ],
+        "row number" : 2,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 4,
+          "page number" : 1,
+          "bounding box" : [ 28.003, 137.141, 57.818, 146.864 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "468801"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 134.798, 117.324, 147.61 ],
+        "row number" : 2,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 5,
+          "page number" : 1,
+          "bounding box" : [ 73.533, 137.141, 103.348, 146.864 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "345678"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 134.798, 162.431, 147.61 ],
+        "row number" : 2,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 6,
+          "page number" : 1,
+          "bounding box" : [ 119.063, 137.141, 148.878, 146.864 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "123123"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 3,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 121.986, 71.795, 134.798 ],
+        "row number" : 3,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 7,
+          "page number" : 1,
+          "bounding box" : [ 28.003, 124.329, 57.818, 134.052 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "468801"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 121.986, 117.324, 134.798 ],
+        "row number" : 3,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 8,
+          "page number" : 1,
+          "bounding box" : [ 73.533, 124.329, 103.348, 134.052 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "345678"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 121.986, 162.431, 134.798 ],
+        "row number" : 3,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 9,
+          "page number" : 1,
+          "bounding box" : [ 119.063, 124.329, 148.878, 134.052 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "123123"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 4,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 109.174, 71.795, 121.986 ],
+        "row number" : 4,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 10,
+          "page number" : 1,
+          "bounding box" : [ 28.003, 111.518, 57.818, 121.24 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "468801"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 109.174, 117.324, 121.986 ],
+        "row number" : 4,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 11,
+          "page number" : 1,
+          "bounding box" : [ 73.533, 111.518, 103.348, 121.24 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "345678"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 109.174, 162.431, 121.986 ],
+        "row number" : 4,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 12,
+          "page number" : 1,
+          "bounding box" : [ 119.063, 111.518, 148.878, 121.24 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "123123"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 5,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 96.362, 71.795, 109.174 ],
+        "row number" : 5,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 13,
+          "page number" : 1,
+          "bounding box" : [ 28.003, 98.706, 57.818, 108.429 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "468801"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 96.362, 117.324, 109.174 ],
+        "row number" : 5,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 14,
+          "page number" : 1,
+          "bounding box" : [ 73.533, 98.706, 103.348, 108.429 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "345678"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 96.362, 162.431, 109.174 ],
+        "row number" : 5,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 15,
+          "page number" : 1,
+          "bounding box" : [ 119.063, 98.706, 148.878, 108.429 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "123123"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 6,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 83.551, 71.795, 96.362 ],
+        "row number" : 6,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 16,
+          "page number" : 1,
+          "bounding box" : [ 28.003, 85.894, 57.818, 95.617 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "468801"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 83.551, 117.324, 96.362 ],
+        "row number" : 6,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 17,
+          "page number" : 1,
+          "bounding box" : [ 73.533, 85.894, 103.348, 95.617 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "345678"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 83.551, 162.431, 96.362 ],
+        "row number" : 6,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 18,
+          "page number" : 1,
+          "bounding box" : [ 119.063, 85.894, 148.878, 95.617 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "123123"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 7,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 70.739, 71.795, 83.551 ],
+        "row number" : 7,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 19,
+          "page number" : 1,
+          "bounding box" : [ 28.003, 73.082, 57.818, 82.805 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "468801"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 70.739, 117.324, 83.551 ],
+        "row number" : 7,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 20,
+          "page number" : 1,
+          "bounding box" : [ 73.533, 73.082, 103.348, 82.805 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "345678"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 70.739, 162.431, 83.551 ],
+        "row number" : 7,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 21,
+          "page number" : 1,
+          "bounding box" : [ 119.063, 73.082, 148.878, 82.805 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "123123"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 8,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 57.927, 71.795, 70.739 ],
+        "row number" : 8,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 22,
+          "page number" : 1,
+          "bounding box" : [ 28.003, 60.27, 57.818, 69.993 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "468801"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 57.927, 117.324, 70.739 ],
+        "row number" : 8,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 23,
+          "page number" : 1,
+          "bounding box" : [ 73.533, 60.27, 103.348, 69.993 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "345678"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 57.927, 162.431, 70.739 ],
+        "row number" : 8,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 24,
+          "page number" : 1,
+          "bounding box" : [ 119.063, 60.27, 148.878, 69.993 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "123123"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 9,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 45.115, 71.795, 57.927 ],
+        "row number" : 9,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 25,
+          "page number" : 1,
+          "bounding box" : [ 28.003, 47.458, 57.818, 57.181 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "468801"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 45.115, 117.324, 57.927 ],
+        "row number" : 9,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 26,
+          "page number" : 1,
+          "bounding box" : [ 73.533, 47.458, 103.348, 57.181 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "345678"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 45.115, 162.431, 57.927 ],
+        "row number" : 9,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 27,
+          "page number" : 1,
+          "bounding box" : [ 119.063, 47.458, 148.878, 57.181 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "123123"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 10,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 32.303, 71.795, 45.115 ],
+        "row number" : 10,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 28,
+          "page number" : 1,
+          "bounding box" : [ 28.003, 34.646, 57.818, 44.369 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "468801"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 32.303, 117.324, 45.115 ],
+        "row number" : 10,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 29,
+          "page number" : 1,
+          "bounding box" : [ 73.533, 34.646, 103.348, 44.369 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "345678"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 32.303, 162.431, 45.115 ],
+        "row number" : 10,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 30,
+          "page number" : 1,
+          "bounding box" : [ 119.063, 34.646, 148.878, 44.369 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "123123"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 11,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 26.265, 7.103, 71.795, 32.303 ],
+        "row number" : 11,
+        "column number" : 1,
+        "row span" : 2,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 31,
+          "page number" : 1,
+          "bounding box" : [ 38.624, 21.835, 58.665, 31.557 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "Total"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 19.915, 117.324, 32.303 ],
+        "row number" : 11,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 32,
+          "page number" : 1,
+          "bounding box" : [ 86.224, 21.835, 161.16, 31.557 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "Daykiuagsdasjdasd"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 117.324, 19.915, 162.431, 32.303 ],
+        "row number" : 11,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 33,
+          "page number" : 1,
+          "bounding box" : [ 86.224, 21.835, 161.16, 31.557 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "Daykiuagsdasjdasd"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 12,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 71.795, 7.103, 162.431, 19.915 ],
+        "row number" : 12,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 2,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 34,
+          "page number" : 1,
+          "bounding box" : [ 96.284, 9.023, 137.76, 18.745 ],
+          "font" : "CIDFont+F1",
+          "font size" : 9.723,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "Doanh thu"
+        } ]
+      } ]
+    } ]
+  } ]
+}

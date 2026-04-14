@@ -1,0 +1,543 @@
+{
+  "file name" : "rotated_tables_clean_patched.pdf",
+  "number of pages" : 5,
+  "author" : "(anonymous)",
+  "title" : "(anonymous)",
+  "creation date" : "D:20260413101701+00'00'",
+  "modification date" : "D:20260413101701+00'00'",
+  "kids" : [ {
+    "type" : "table",
+    "id" : 1,
+    "level" : "1",
+    "page number" : 1,
+    "bounding box" : [ 227.5, 377.5, 524.69, 486.5 ],
+    "number of rows" : 6,
+    "number of columns" : 5,
+    "rows" : [ {
+      "type" : "table row",
+      "row number" : 1,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 228.0, 468.0, 296.13, 486.0 ],
+        "row number" : 1,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 1,
+          "page number" : 1,
+          "bounding box" : [ 234.0, 470.75, 281.79, 482.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "Main Col 1"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 296.13, 468.0, 355.92, 486.0 ],
+        "row number" : 1,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 2,
+          "page number" : 1,
+          "bounding box" : [ 302.13, 470.75, 349.92, 482.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "Main Col 2"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 355.92, 468.0, 410.16, 486.0 ],
+        "row number" : 1,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 3,
+          "page number" : 1,
+          "bounding box" : [ 361.92, 470.75, 404.16, 482.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "SubCol A"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 410.16, 468.0, 464.4, 486.0 ],
+        "row number" : 1,
+        "column number" : 4,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 4,
+          "page number" : 1,
+          "bounding box" : [ 416.16, 470.75, 458.4, 482.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "SubCol B"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 464.4, 468.0, 524.19, 486.0 ],
+        "row number" : 1,
+        "column number" : 5,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 5,
+          "page number" : 1,
+          "bounding box" : [ 470.4, 470.75, 518.19, 482.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "Main Col 5"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 2,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 228.0, 450.0, 296.13, 468.0 ],
+        "row number" : 2,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 6,
+          "page number" : 1,
+          "bounding box" : [ 234.0, 452.75, 246.23, 464.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "A1"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 296.13, 450.0, 355.92, 468.0 ],
+        "row number" : 2,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 7,
+          "page number" : 1,
+          "bounding box" : [ 302.13, 452.75, 314.36, 464.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "B1"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 355.92, 450.0, 410.16, 468.0 ],
+        "row number" : 2,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 410.16, 450.0, 464.4, 468.0 ],
+        "row number" : 2,
+        "column number" : 4,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 464.4, 450.0, 524.19, 468.0 ],
+        "row number" : 2,
+        "column number" : 5,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 3,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 228.0, 432.0, 296.13, 450.0 ],
+        "row number" : 3,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 8,
+          "page number" : 1,
+          "bounding box" : [ 234.0, 434.75, 290.13, 446.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "RowGroup 1"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 296.13, 432.0, 355.92, 450.0 ],
+        "row number" : 3,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 9,
+          "page number" : 1,
+          "bounding box" : [ 302.13, 434.75, 331.02, 446.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R1-C2"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 355.92, 432.0, 410.16, 450.0 ],
+        "row number" : 3,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 10,
+          "page number" : 1,
+          "bounding box" : [ 361.92, 434.75, 384.7, 446.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R1-A"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 410.16, 432.0, 464.4, 450.0 ],
+        "row number" : 3,
+        "column number" : 4,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 11,
+          "page number" : 1,
+          "bounding box" : [ 416.16, 434.75, 438.94, 446.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R1-B"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 464.4, 432.0, 524.19, 450.0 ],
+        "row number" : 3,
+        "column number" : 5,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 12,
+          "page number" : 1,
+          "bounding box" : [ 470.4, 434.75, 499.29, 446.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R1-C5"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 4,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 228.0, 414.0, 296.13, 432.0 ],
+        "row number" : 4,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 296.13, 414.0, 355.92, 432.0 ],
+        "row number" : 4,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 13,
+          "page number" : 1,
+          "bounding box" : [ 302.13, 416.75, 334.36, 428.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R1-sub"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 355.92, 414.0, 410.16, 432.0 ],
+        "row number" : 4,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 14,
+          "page number" : 1,
+          "bounding box" : [ 361.92, 416.75, 390.26, 428.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R1-A2"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 410.16, 414.0, 464.4, 432.0 ],
+        "row number" : 4,
+        "column number" : 4,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 15,
+          "page number" : 1,
+          "bounding box" : [ 416.16, 416.75, 444.5, 428.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R1-B2"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 464.4, 414.0, 524.19, 432.0 ],
+        "row number" : 4,
+        "column number" : 5,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 5,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 228.0, 396.0, 296.13, 414.0 ],
+        "row number" : 5,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 16,
+          "page number" : 1,
+          "bounding box" : [ 234.0, 398.75, 290.13, 410.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "RowGroup 2"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 296.13, 396.0, 355.92, 414.0 ],
+        "row number" : 5,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 17,
+          "page number" : 1,
+          "bounding box" : [ 302.13, 398.75, 331.02, 410.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R2-C2"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 355.92, 396.0, 410.16, 414.0 ],
+        "row number" : 5,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 18,
+          "page number" : 1,
+          "bounding box" : [ 361.92, 398.75, 384.7, 410.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R2-A"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 410.16, 396.0, 464.4, 414.0 ],
+        "row number" : 5,
+        "column number" : 4,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 19,
+          "page number" : 1,
+          "bounding box" : [ 416.16, 398.75, 438.94, 410.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R2-B"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 464.4, 396.0, 524.19, 414.0 ],
+        "row number" : 5,
+        "column number" : 5,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 20,
+          "page number" : 1,
+          "bounding box" : [ 470.4, 398.75, 499.29, 410.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R2-C5"
+        } ]
+      } ]
+    }, {
+      "type" : "table row",
+      "row number" : 6,
+      "cells" : [ {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 228.0, 378.0, 296.13, 396.0 ],
+        "row number" : 6,
+        "column number" : 1,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 296.13, 378.0, 355.92, 396.0 ],
+        "row number" : 6,
+        "column number" : 2,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 21,
+          "page number" : 1,
+          "bounding box" : [ 302.13, 380.75, 334.36, 392.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R2-sub"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 355.92, 378.0, 410.16, 396.0 ],
+        "row number" : 6,
+        "column number" : 3,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 22,
+          "page number" : 1,
+          "bounding box" : [ 361.92, 380.75, 390.26, 392.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R2-A2"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 410.16, 378.0, 464.4, 396.0 ],
+        "row number" : 6,
+        "column number" : 4,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ {
+          "type" : "paragraph",
+          "id" : 23,
+          "page number" : 1,
+          "bounding box" : [ 416.16, 380.75, 444.5, 392.31 ],
+          "font" : "Helvetica",
+          "font size" : 10.0,
+          "text color" : "[0.0, 0.0, 0.0]",
+          "content" : "R2-B2"
+        } ]
+      }, {
+        "type" : "table cell",
+        "page number" : 1,
+        "bounding box" : [ 464.4, 378.0, 524.19, 396.0 ],
+        "row number" : 6,
+        "column number" : 5,
+        "row span" : 1,
+        "column span" : 1,
+        "kids" : [ ]
+      } ]
+    } ]
+  }, {
+    "type" : "image",
+    "id" : 3,
+    "page number" : 2,
+    "bounding box" : [ 149.964, 241.993, 626.167, 624.156 ],
+    "source" : "rotated_tables_clean_patched_images/imageFile1.png"
+  }, {
+    "type" : "image",
+    "id" : 5,
+    "page number" : 3,
+    "bounding box" : [ 134.331, 169.277, 684.029, 718.975 ],
+    "source" : "rotated_tables_clean_patched_images/imageFile2.png"
+  }, {
+    "type" : "image",
+    "id" : 7,
+    "page number" : 4,
+    "bounding box" : [ 221.633, 369.786, 624.357, 582.404 ],
+    "source" : "rotated_tables_clean_patched_images/imageFile3.png"
+  }, {
+    "type" : "image",
+    "id" : 9,
+    "page number" : 5,
+    "bounding box" : [ 137.025, 234.331, 686.723, 784.029 ],
+    "source" : "rotated_tables_clean_patched_images/imageFile4.png"
+  } ]
+}

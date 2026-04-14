@@ -1,0 +1,19 @@
+[project]
+name = "opendataloader"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "imgaug>=0.4.0",
+    "layoutparser>=0.3.4",
+    "opencv-python>=4.13.0.92",
+    "opendataloader-pdf[hybrid]>=2.2.1",
+    "paddleocr>=3.4.0",
+    "paddlepaddle-gpu>=2.6.2",
+    "pyclipper>=1.4.0",
+    "pymupdf>=1.27.2.2",
+    "pytest>=9.0.3",
+    "scikit-image>=0.25.2",
+    "shapely>=2.1.2",
+]

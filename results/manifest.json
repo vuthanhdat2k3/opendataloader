@@ -1,0 +1,14 @@
+[
+  {
+    "page": 1,
+    "table_index": 1,
+    "angle": 20.0,
+    "before_image": "/home/dat/models/opendataloader/results/page_1_table_1_angle_+20.0_before_rotate.png",
+    "after_image": "/home/dat/models/opendataloader/results/page_1_table_1_angle_+20.0_after_rotate.png",
+    "patch_shape": [
+      532,
+      521,
+      3
+    ]
+  }
+]
