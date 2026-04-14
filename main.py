@@ -1,5 +1,8 @@
-def main():
-    print("Hello from opendataloader!")
+from test import RUNS_DIR_ABS, demo
+
+
+def main() -> None:
+    demo.launch(server_name="0.0.0.0", allowed_paths=[str(RUNS_DIR_ABS)])
 
 
 if __name__ == "__main__":
