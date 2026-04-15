@@ -10,9 +10,19 @@ from urllib.parse import quote, urlparse
 from urllib.request import urlopen
 
 import gradio as gr
+
+# Fail fast with actionable diagnostics when an old gradio is imported.
+if not hasattr(gr, "Blocks"):
+    raise RuntimeError(
+        "Your environment imported an old 'gradio' without Blocks.\n"
+        f"Imported gradio from: {getattr(gr, '__file__', 'unknown')}\n"
+        f"gradio version: {getattr(gr, '__version__', 'unknown')}\n\n"
+        "Fix:\n"
+        "  - Ensure you are running via uv in this repo: `uv run python test.py`\n"
+        "  - Then upgrade gradio in the uv environment: `uv add 'gradio>=6.12.0' && uv sync`\n"
+    )
 import fitz
 import numpy as np
-import opendataloader_pdf
 from PIL import Image
 
 from native_table_detector.src.core.detector import NativePDFTableDetector
@@ -25,6 +35,17 @@ RUNS_DIR = Path("output/gradio_runs")
 RUNS_DIR.mkdir(parents=True, exist_ok=True)
 RUNS_DIR_ABS = RUNS_DIR.resolve()
 
+print("Initializing Pipeline & Models. This might take a while...")
+GLOBAL_PIPELINE = PipelineFactory.build(
+    PipelineConfig(
+        angle_threshold=2.0,
+        overlap_threshold=0.08,
+        save_debug_artifacts=True,
+        ocr_use_gpu=True,
+    )
+)
+print("Pipeline initialization complete!")
+
 
 def _safe_stem(name: str) -> str:
     stem = Path(name).stem
@@ -33,7 +54,7 @@ def _safe_stem(name: str) -> str:
 
 
 def _to_file_url(path: Path) -> str:
-    return f"/gradio_api/file={quote(str(path.resolve()))}"
+    return f"/file={quote(str(path.resolve()))}"
 
 
 def _pdf_iframe(path: Path | None, empty_text: str) -> str:
@@ -472,20 +493,15 @@ def process_pdf(
 
     try:
         start = time.perf_counter()
-        pipeline = PipelineFactory.build(
-            PipelineConfig(
-                angle_threshold=2.0,
-                overlap_threshold=0.08,
-                save_debug_artifacts=True,
-            )
-        )
-        pipeline_result = pipeline.run(
+        pipeline_result = GLOBAL_PIPELINE.run(
             PipelineRequest(
                 pdf_path=processing_input_pdf,
                 output_dir=run_dir,
                 angle_threshold=2.0,
                 overlap_threshold=0.08,
                 save_debug_artifacts=True,
+                use_hybrid_docling_fast=use_hybrid_docling_fast,
+                hybrid_url=hybrid_url,
             )
         )
         elapsed = time.perf_counter() - start
@@ -513,20 +529,32 @@ def process_pdf(
 
     rotated_blocks = []
     for item in pipeline_result.stage3.hybrid_results:
-        patch = Path(item.patch_deskewed)
-        if patch.exists():
-            rotated_blocks.append(
-                "<div style='margin-bottom:8px'>"
-                f"<div><b>Detect#{item.detection_id}</b> page={item.page_number}, "
-                f"angle={item.angle:.1f}°, conf={item.ocr_confidence:.2f}</div>"
-                f"<img src='{_to_file_url(patch)}' style='max-width:100%;border:1px solid #ddd;border-radius:6px'/>"
-                "</div>"
-            )
+        patch_before = Path(item.patch_before) if getattr(item, "patch_before", None) else None
+        patch_deskewed = Path(item.patch_deskewed) if getattr(item, "patch_deskewed", None) else None
+        patch_tight = Path(item.patch_tight) if getattr(item, "patch_tight", None) else None
+        
+        images_html = ""
+        if patch_before and patch_before.exists():
+            images_html += f"<div><div style='font-size:12px;color:#666'>Before Rotate</div><img src='{_to_file_url(patch_before)}' style='max-width:100%;border:1px solid #ddd;border-radius:6px'/></div>"
+        if patch_deskewed and patch_deskewed.exists():
+            images_html += f"<div><div style='font-size:12px;color:#666'>Rotated</div><img src='{_to_file_url(patch_deskewed)}' style='max-width:100%;border:1px solid #ddd;border-radius:6px'/></div>"
+        if patch_tight and patch_tight.exists():
+            images_html += f"<div><div style='font-size:12px;color:#666'>Tight (OCR Input)</div><img src='{_to_file_url(patch_tight)}' style='max-width:100%;border:1px solid #ddd;border-radius:6px'/></div>"
+
+        rotated_blocks.append(
+            "<div style='margin-bottom:12px;border-bottom:1px solid #eee;padding-bottom:12px'>"
+            f"<div><b>Detect#{item.detection_id}</b> page={item.page_number}, "
+            f"angle={item.angle:.1f}°, conf={item.ocr_confidence:.2f}</div>"
+            f"<pre style='background:#f5f5f5;padding:8px;border-radius:4px;overflow-x:auto;max-height:200px'>{item.ocr_markdown}</pre>"
+            "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px'>"
+            f"{images_html}</div></div>"
+        )
     rotated_tables_combined_html = "\n".join(rotated_blocks)
 
     status = (
         f"Processed in {elapsed:.2f} seconds. Source={source_name}. "
         f"Pages={','.join(map(str, selected_pages))}. "
+        f"Hybrid={'docling-fast(full)' if use_hybrid_docling_fast else 'off'}. "
         f"Saved run: {run_dir}. "
         f"detected={pipeline_result.stage2.detector_rotated_total}, "
         f"matched={pipeline_result.stage2.detector_matched_to_odl}, "
@@ -696,4 +724,8 @@ with gr.Blocks(title="OpenDataLoader PDF Tester") as demo:
 
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", allowed_paths=[str(RUNS_DIR_ABS)])
+    demo.launch(
+        server_name=os.getenv("GRADIO_SERVER_NAME", "127.0.0.1"),
+        share=os.getenv("GRADIO_SHARE", "0") == "1",
+        allowed_paths=[str(RUNS_DIR_ABS)],
+    )

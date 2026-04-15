@@ -26,7 +26,12 @@ class PaddleOCRTableProcessor:
             self._patch_numpy_sctypes()
             from paddleocr import PaddleOCR
 
-            ocr_kwargs = {"lang": self.lang, "use_angle_cls": True}
+            ocr_kwargs = {
+                "lang": self.lang,
+                "use_textline_orientation": True,
+                "device": "cpu",
+                "enable_mkldnn": False,
+            }
             if self.lang.lower() in {"vi", "vietnamese"}:
                 vi_cfg = self._resolve_vi_ocr_config()
                 if vi_cfg:
@@ -124,7 +129,12 @@ class PaddleOCRTableProcessor:
 
             image_bgr = self._to_bgr(image_rgb)
 
-            ocr_result = self._engine.ocr(image_bgr, cls=True)
+            try:
+                ocr_result = self._engine.ocr(image_bgr, cls=True)
+            except TypeError:
+                ocr_result = self._engine.ocr(image_bgr)
+            except ValueError:
+                ocr_result = self._engine.ocr(image_bgr)
 
             if not ocr_result or not ocr_result[0]:
                 return self._empty_result()
@@ -282,7 +292,12 @@ class PaddleOCRTableProcessor:
         """
         try:
             image_bgr = self._to_bgr(image_rgb)
-            ocr_result = self._engine.ocr(image_bgr, cls=True)
+            try:
+                ocr_result = self._engine.ocr(image_bgr, cls=True)
+            except TypeError:
+                ocr_result = self._engine.ocr(image_bgr)
+            except ValueError:
+                ocr_result = self._engine.ocr(image_bgr)
 
             if not ocr_result or not ocr_result[0]:
                 return "", 0.0

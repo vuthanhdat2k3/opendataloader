@@ -12,6 +12,7 @@ wheels/
 # Runtime artifacts
 output/
 results/
+data/
 native_table_detector/output/
 native_table_detector/data/raw/
 native_table_detector/data/sample/

@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  opendataloader-ui:
+    build: .
+    ports:
+      - "7860:7860"
+    environment:
+      # Ensure Paddle stays on the safe path in container.
+      FLAGS_use_onednn: "0"
+      FLAGS_use_mkldnn: "0"
+      PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK: "True"
+      MODELS_ROOT: "/models"
+      PADDLEOCR_HOME: "/models/paddleocr"
+      # Change if you want other OCR languages.
+      PADDLEOCR_LANG: "vi"
+      PADDLEOCR_USE_GPU: "False"
+      # Gradio defaults
+      GRADIO_SERVER_NAME: "0.0.0.0"
+      GRADIO_SERVER_PORT: "7860"
+    volumes:
+      # Persist downloaded models across rebuilds/runs.
+      - ./models:/models
+      # Persist outputs.
+      - ./output:/app/output
+    command: ["uv", "run", "python", "test.py"]
+

@@ -2,23 +2,74 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
+import subprocess
+import json
 
-import opendataloader_pdf
+try:
+    import opendataloader_pdf
+except ModuleNotFoundError:
+    opendataloader_pdf = None
 
 from ..pipeline.contracts import Stage1Result, Stage1Table
 from ..utils.io import read_json, save_json
 
 
 class Stage1ODLExtractor:
-    def run(self, pdf_path: Path, output_dir: Path) -> Stage1Result:
+    @staticmethod
+    def _convert_with_doc_env(pdf_path: Path, output_dir: Path, convert_kwargs: dict) -> None:
+        repo_root = Path(__file__).resolve().parents[3]
+        doc_python = repo_root / ".venv-doc" / "bin" / "python"
+        if not doc_python.exists():
+            raise ModuleNotFoundError(
+                "opendataloader_pdf is missing in OCR env and DOC env is not ready. "
+                "Run: bash scripts/setup_split_envs.sh"
+            )
+
+        bridge_code = (
+            "import json, opendataloader_pdf, sys; "
+            "kwargs = json.loads(sys.argv[3]); "
+            "opendataloader_pdf.convert("
+            "input_path=sys.argv[1], output_dir=sys.argv[2], "
+            "**kwargs"
+            ")"
+        )
+        subprocess.run(
+            [
+                str(doc_python),
+                "-c",
+                bridge_code,
+                str(pdf_path),
+                str(output_dir),
+                json.dumps(convert_kwargs),
+            ],
+            check=True,
+        )
+
+    def run(
+        self,
+        pdf_path: Path,
+        output_dir: Path,
+        use_hybrid_docling_fast: bool = False,
+        hybrid_url: str = "",
+    ) -> Stage1Result:
         output_dir.mkdir(parents=True, exist_ok=True)
 
+        convert_kwargs = {"format": "json,html,markdown,pdf"}
+        if use_hybrid_docling_fast:
+            convert_kwargs["hybrid"] = "docling-fast"
+            convert_kwargs["hybrid_mode"] = "full"
+            if hybrid_url:
+                convert_kwargs["hybrid_url"] = hybrid_url
+
         start = time.perf_counter()
-        opendataloader_pdf.convert(
-            input_path=str(pdf_path),
-            output_dir=str(output_dir),
-            format="json,html,markdown,pdf",
-        )
+        if opendataloader_pdf is not None:
+            opendataloader_pdf.convert(
+                input_path=str(pdf_path),
+                output_dir=str(output_dir),
+                **convert_kwargs,
+            )
+        else:
+            self._convert_with_doc_env(pdf_path, output_dir, convert_kwargs)
         elapsed = time.perf_counter() - start
 
         json_path = output_dir / f"{pdf_path.stem}.json"

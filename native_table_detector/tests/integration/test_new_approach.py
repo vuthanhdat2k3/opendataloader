@@ -332,7 +332,10 @@ def ocr_patch(patch: np.ndarray, ocr_engine) -> dict:
     patch_rgb = patch
 
     try:
-        result = ocr_engine.ocr(patch_rgb, cls=True)
+        try:
+            result = ocr_engine.ocr(patch_rgb, cls=True)
+        except (TypeError, ValueError):
+            result = ocr_engine.ocr(patch_rgb)
 
         if not result or not result[0]:
             return {"markdown": "", "confidence": 0.0}

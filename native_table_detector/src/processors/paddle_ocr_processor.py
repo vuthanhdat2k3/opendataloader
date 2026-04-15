@@ -55,12 +55,15 @@ class PaddleOCRProcessor:
             self.logger.info("PaddleOCR engines initialized successfully.")
 
     def _build_ocr_engine(self) -> PaddleOCR:
+        device = "gpu" if self.use_gpu else "cpu"
         base_kwargs = {
             "lang": self.lang,
-            "use_gpu": self.use_gpu,
+            "device": device,
             "use_tensorrt": self.use_tensorrt,
             "precision": self.precision,
-            "use_angle_cls": True,
+            "use_textline_orientation": True,
+            # Avoid MKLDNN/oneDNN executor paths that can crash on some builds.
+            "enable_mkldnn": False,
             "det": True,
             "rec": True,
             "cls": True,
@@ -70,11 +73,13 @@ class PaddleOCRProcessor:
 
     def _build_layout_engine(self) -> Any:
         if _PPStructure is not None:
+            device = "gpu" if self.use_gpu else "cpu"
             base_kwargs = {
                 "lang": self.lang,
-                "use_gpu": self.use_gpu,
+                "device": device,
                 "use_tensorrt": self.use_tensorrt,
                 "precision": self.precision,
+                "enable_mkldnn": False,
                 "layout": True,
                 "table": True,
                 "ocr": True,
@@ -198,7 +203,12 @@ class PaddleOCRProcessor:
             rotated = self._rotate_orthogonal(resized, angle)
             try:
                 # Full pipeline: DBNet detection + angle cls + SVTR-LCNet recognition.
-                ocr_result = ocr_engine.ocr(rotated, cls=True, det=True, rec=True)
+                try:
+                    ocr_result = ocr_engine.ocr(rotated, cls=True, det=True, rec=True)
+                except TypeError:
+                    ocr_result = ocr_engine.ocr(rotated)
+                except ValueError:
+                    ocr_result = ocr_engine.ocr(rotated)
                 score = self._score_ocr_result(ocr_result)
             except Exception as e:
                 self.logger.warning("Rotation %d failed during OCR scoring: %s", angle, e)
@@ -348,7 +358,12 @@ class PaddleOCRProcessor:
             return "", 0.0
 
         try:
-            ocr_res = ocr_engine.ocr(crop, cls=True, det=True, rec=True)
+            try:
+                ocr_res = ocr_engine.ocr(crop, cls=True, det=True, rec=True)
+            except TypeError:
+                ocr_res = ocr_engine.ocr(crop)
+            except ValueError:
+                ocr_res = ocr_engine.ocr(crop)
             return self._flatten_ocr_text(ocr_res)
         except Exception as e:
             self.logger.warning("Fallback OCR failed on text region: %s", e)

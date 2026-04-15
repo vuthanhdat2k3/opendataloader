@@ -1,6 +1,9 @@
-from .config import PipelineConfig
-from .factory import PipelineFactory
-from .orchestrator import ProductionPipeline, run_pipeline
+"""
+Pipeline package.
 
-__all__ = ["PipelineConfig", "PipelineFactory", "ProductionPipeline", "run_pipeline"]
+Keep this module import-light to avoid circular imports when submodules import
+`native_table_detector.src.pipeline.<submodule>`.
+"""
+
+__all__ = []
 

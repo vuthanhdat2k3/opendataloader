@@ -8,8 +8,8 @@ from native_table_detector.src.pipeline.orchestrator import run_pipeline
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run native table detector pipeline")
-    parser.add_argument("--pdf", type=str, required=True)
-    parser.add_argument("--out", type=str, default="native_table_detector/output")
+    parser.add_argument("--pdf", type=str, default="data/rotated_tables_clean.pdf")
+    parser.add_argument("--out", type=str, default="native_table_detector/output/test_pipeline/")
     parser.add_argument("--threshold", type=float, default=2.0)
     parser.add_argument("--overlap-threshold", type=float, default=0.08)
     args = parser.parse_args()

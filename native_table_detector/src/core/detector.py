@@ -324,6 +324,45 @@ class NativePDFTableDetector:
         deskewed = warp_with_ccw_angle(deskew_ccw_deg)
         return before_deskew, deskewed
 
+    @staticmethod
+    def _tight_crop_white_border(
+        patch_rgb: np.ndarray,
+        *,
+        bg_threshold: int = 250,
+        pad: int = 2,
+        min_size: int = 8,
+    ) -> np.ndarray:
+        """
+        Crop away near-white border introduced by perspective warp/rotation.
+        Keeps a small padding to avoid cutting table strokes.
+        """
+        if patch_rgb is None or not isinstance(patch_rgb, np.ndarray):
+            return patch_rgb
+        if patch_rgb.ndim != 3 or patch_rgb.shape[2] < 3:
+            return patch_rgb
+
+        h, w = int(patch_rgb.shape[0]), int(patch_rgb.shape[1])
+        if h < min_size or w < min_size:
+            return patch_rgb
+
+        content = np.any(patch_rgb[:, :, :3] < bg_threshold, axis=2)
+        if not np.any(content):
+            return patch_rgb
+
+        ys, xs = np.where(content)
+        y0, y1 = int(ys.min()), int(ys.max())
+        x0, x1 = int(xs.min()), int(xs.max())
+
+        y0 = max(0, y0 - pad)
+        x0 = max(0, x0 - pad)
+        y1 = min(h - 1, y1 + pad)
+        x1 = min(w - 1, x1 + pad)
+
+        cropped = patch_rgb[y0 : y1 + 1, x0 : x1 + 1]
+        if cropped.shape[0] < min_size or cropped.shape[1] < min_size:
+            return patch_rgb
+        return cropped
+
     def _rotate_right_angle(self, image_rgb, clockwise_angle):
         angle = int(clockwise_angle) % 360
         if angle == 90:
@@ -344,7 +383,14 @@ class NativePDFTableDetector:
             return None
 
         try:
-            self._orientation_predictor = crop_orientation_predictor(pretrained=True)
+            predictor = crop_orientation_predictor(pretrained=True)
+            try:
+                import torch
+                device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+                predictor = predictor.to(device).eval()
+            except Exception:
+                pass
+            self._orientation_predictor = predictor
         except Exception:
             self._orientation_predictor_failed = True
             self._orientation_predictor = None

@@ -39,6 +39,8 @@ class ProductionPipeline:
         stage1 = self.stage1.run(
             pdf_path=request.pdf_path,
             output_dir=request.output_dir / "stage1_opendataloader",
+            use_hybrid_docling_fast=request.use_hybrid_docling_fast,
+            hybrid_url=request.hybrid_url,
         )
         metrics["stage1_sec"] = round(time.perf_counter() - t0, 3)
 

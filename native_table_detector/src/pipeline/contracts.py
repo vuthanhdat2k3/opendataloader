@@ -12,6 +12,8 @@ class PipelineRequest:
     angle_threshold: float = 2.0
     overlap_threshold: float = 0.08
     save_debug_artifacts: bool = True
+    use_hybrid_docling_fast: bool = False
+    hybrid_url: str = ""
 
 
 @dataclass
@@ -74,6 +76,7 @@ class OCRResult:
     ocr_confidence: float
     patch_before: str
     patch_deskewed: str
+    patch_tight: str = ""
 
 
 @dataclass
