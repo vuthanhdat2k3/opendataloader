@@ -191,6 +191,7 @@ def replace_table_content(
         return odl_table
 
     new_kid = dict(odl_table)
+    new_rows = create_rows_from_cells(new_rows, page_num)
 
     new_kid.update(
         {
@@ -200,7 +201,11 @@ def replace_table_content(
             "number of columns": new_num_cols,
             "rotated_table_replaced": True,
             "ocr_confidence": merged_table.get("ocr_confidence", 0),
-            "rows": create_rows_from_cells(new_rows, page_num),
+            "rows": new_rows,
+            # Keep only OCR-derived rows. Old table-level kids/content may contain
+            # misaligned text blocks from the expanded detector box.
+            "kids": [],
+            "content": "",
             "hybrid_ocr_metadata": {
                 "page_number": merged_table.get("page_number"),
                 "table_index": merged_table.get("table_index"),

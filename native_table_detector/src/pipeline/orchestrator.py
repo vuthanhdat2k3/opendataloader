@@ -28,6 +28,7 @@ class ProductionPipeline:
             ocr_lang=config.ocr_lang,
             ocr_use_gpu=config.ocr_use_gpu,
             spatial_dist_threshold=config.detector_spatial_dist_threshold,
+            normalize_orientation=config.normalize_orientation,
         )
         self.stage4 = Stage4Merger()
 

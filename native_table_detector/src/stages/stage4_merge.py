@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
@@ -106,6 +107,48 @@ def _normalize_table_markdown(table_md: str) -> str:
     return "\n".join(parts)
 
 
+def _table_vocab_from_markdown(table_md: str) -> set[str]:
+    return {
+        tok.lower()
+        for tok in re.findall(r"[A-Za-z0-9]+", table_md)
+        if tok.strip()
+    }
+
+
+def _token_matches_table_vocab(token: str, table_vocab: set[str]) -> bool:
+    if token in table_vocab:
+        return True
+
+    # Accept compacted tokens like "a1b1c1d1" or "col1col2col3col4"
+    # if they can be segmented into >=2 known table tokens.
+    n = len(token)
+    best_parts = [-1] * (n + 1)
+    best_parts[0] = 0
+    for i in range(n):
+        if best_parts[i] < 0:
+            continue
+        for j in range(i + 1, n + 1):
+            if token[i:j] in table_vocab:
+                best_parts[j] = max(best_parts[j], best_parts[i] + 1)
+    return best_parts[n] >= 2
+
+
+def _is_table_noise_line(line: str, table_vocab: set[str]) -> bool:
+    stripped = line.strip()
+    if not stripped:
+        return False
+    if stripped.startswith("|") and stripped.endswith("|"):
+        return False
+
+    candidate = stripped.lstrip("-* ").strip()
+    tokens = [tok.lower() for tok in re.findall(r"[A-Za-z0-9]+", candidate)]
+    if not tokens:
+        return False
+
+    matched = sum(1 for tok in tokens if _token_matches_table_vocab(tok, table_vocab))
+    return matched / len(tokens) >= 0.8
+
+
 def merge_into_original_markdown_with_replacements(
     original_markdown_path: Path, original_json: dict, merged_json: dict
 ) -> str:
@@ -158,7 +201,30 @@ def merge_into_original_markdown_with_replacements(
         if not new_table_md:
             continue
         block = blocks[block_idx]
-        replacements.append((block["start"], block["end"], new_table_md.splitlines()))
+        replace_end = block["end"]
+
+        # Some ODL markdown outputs include duplicate/noisy table text immediately
+        # after a table block (e.g., flattened bullets). Remove that tail as well.
+        next_table_start = len(lines)
+        for other in blocks:
+            if other["start"] > block["end"]:
+                next_table_start = min(next_table_start, other["start"])
+
+        tail_lines = lines[block["end"] + 1 : next_table_start]
+        non_empty_tail = [ln for ln in tail_lines if ln.strip()]
+        table_vocab = _table_vocab_from_markdown(new_table_md)
+        if non_empty_tail and all(
+            _is_table_noise_line(ln, table_vocab) for ln in non_empty_tail
+        ):
+            replace_end = next_table_start - 1
+
+        replacement_lines = new_table_md.splitlines()
+        if block["start"] > 0 and lines[block["start"] - 1].strip():
+            replacement_lines = [""] + replacement_lines
+        if replace_end + 1 < len(lines) and lines[replace_end + 1].strip():
+            replacement_lines = replacement_lines + [""]
+
+        replacements.append((block["start"], replace_end, replacement_lines))
 
     replacements.sort(key=lambda x: x[0], reverse=True)
     for start, end, new_lines in replacements:
@@ -201,6 +267,8 @@ class Stage4Merger:
                 kid["ocr_confidence"] = hybrid["ocr_confidence"]
                 kid["ocr_markdown_raw"] = hybrid["ocr_markdown"]
                 kid["rows"] = rows_data
+                kid["kids"] = []
+                kid["content"] = ""
                 replaced_count += 1
             merged_kids.append(kid)
 

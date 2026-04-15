@@ -34,8 +34,10 @@ class Stage3HybridOCR:
         ocr_lang: str = "vi",
         ocr_use_gpu: bool = False,
         spatial_dist_threshold: float = 100.0,
+        normalize_orientation: bool = False,
     ):
         self.save_debug_artifacts = save_debug_artifacts
+        self.normalize_orientation = normalize_orientation
         try:
             self.ocr_engine = PaddleOCR(
                 lang=ocr_lang,
@@ -183,7 +185,8 @@ class Stage3HybridOCR:
                 patch_before, patch_deskewed = self.detector._extract_cells_from_rotated(
                     page, selected_obb, det.angle
                 )
-                patch_deskewed = self.detector._normalize_patch_upright(patch_deskewed)
+                if self.normalize_orientation:
+                    patch_deskewed = self.detector._normalize_patch_upright(patch_deskewed)
                 patch_tight = self.detector._tight_crop_white_border(patch_deskewed)
                 ocr_result = self._ocr_patch(patch_tight, self.ocr_engine)
 

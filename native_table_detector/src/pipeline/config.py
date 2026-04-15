@@ -10,6 +10,7 @@ class PipelineConfig:
     save_debug_artifacts: bool = True
     ocr_lang: str = "vi"
     ocr_use_gpu: bool = False
+    normalize_orientation: bool = False
     detector_spatial_dist_threshold: float = 100.0
     ocr_workers: int = 1
 
