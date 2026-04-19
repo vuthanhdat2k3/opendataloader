@@ -1,14 +1,13 @@
 from __future__ import annotations
 
+import base64
+import mimetypes
+import os
 import time
 from pathlib import Path
-import subprocess
 import json
 
-try:
-    import opendataloader_pdf
-except ModuleNotFoundError:
-    opendataloader_pdf = None
+import requests
 
 from ..pipeline.contracts import Stage1Result, Stage1Table
 from ..utils.io import read_json, save_json
@@ -16,60 +15,100 @@ from ..utils.io import read_json, save_json
 
 class Stage1ODLExtractor:
     @staticmethod
-    def _convert_with_doc_env(pdf_path: Path, output_dir: Path, convert_kwargs: dict) -> None:
-        repo_root = Path(__file__).resolve().parents[3]
-        doc_python = repo_root / ".venv-doc" / "bin" / "python"
-        if not doc_python.exists():
-            raise ModuleNotFoundError(
-                "opendataloader_pdf is missing in OCR env and DOC env is not ready. "
-                "Run: bash scripts/setup_split_envs.sh"
+    def _decode_annotated_pdf(value: str | bytes | None) -> bytes | None:
+        if value is None:
+            return None
+        if isinstance(value, bytes):
+            return value
+        raw = value.strip()
+        if not raw:
+            return None
+        if raw.startswith("data:application/pdf;base64,"):
+            raw = raw.split(",", 1)[1]
+        try:
+            return base64.b64decode(raw, validate=True)
+        except Exception:
+            return raw.encode("utf-8", errors="ignore")
+
+    @staticmethod
+    def _convert_via_gateway(
+        pdf_path: Path,
+        output_dir: Path,
+        hybrid_mode: str,
+        hybrid_url: str,
+    ) -> None:
+        api_url = os.getenv("ODL_API_URL", "http://localhost:8000/v1/convert/file").strip()
+        timeout_sec = float(os.getenv("ODL_API_TIMEOUT", "300"))
+        data_payload: dict[str, str] = {}
+        if hybrid_mode in ("full", "auto"):
+            data_payload["hybrid"] = "docling-fast"
+            data_payload["hybrid_mode"] = hybrid_mode
+            if hybrid_url:
+                data_payload["hybrid_url"] = hybrid_url
+
+        mime_type = mimetypes.guess_type(pdf_path.name)[0] or "application/pdf"
+        with pdf_path.open("rb") as f:
+            response = requests.post(
+                api_url,
+                files={"files": (pdf_path.name, f, mime_type)},
+                data=data_payload,
+                timeout=timeout_sec,
+            )
+        if not response.ok:
+            raise RuntimeError(
+                f"Stage1 gateway failed with HTTP {response.status_code}: {response.text}"
+            )
+        payload = response.json()
+        document = payload.get("document", {})
+        triage = payload.get("triage")
+        if triage is not None:
+            (output_dir / f"{pdf_path.stem}_triage.json").write_text(
+                json.dumps(triage, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+        triage_summary = payload.get("summary") or payload.get("triage_summary")
+        if triage_summary is not None:
+            (output_dir / f"{pdf_path.stem}_triage_summary.json").write_text(
+                json.dumps(triage_summary, ensure_ascii=False, indent=2), encoding="utf-8"
             )
 
-        bridge_code = (
-            "import json, opendataloader_pdf, sys; "
-            "kwargs = json.loads(sys.argv[3]); "
-            "opendataloader_pdf.convert("
-            "input_path=sys.argv[1], output_dir=sys.argv[2], "
-            "**kwargs"
-            ")"
+        json_content = document.get("json_content")
+        json_path = output_dir / f"{pdf_path.stem}.json"
+        if isinstance(json_content, str):
+            json_path.write_text(json_content, encoding="utf-8")
+        else:
+            json_path.write_text(
+                json.dumps(json_content or {}, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+
+        markdown = document.get("markdown", "")
+        (output_dir / f"{pdf_path.stem}.md").write_text(markdown or "", encoding="utf-8")
+
+        html = document.get("html", "")
+        (output_dir / f"{pdf_path.stem}.html").write_text(html or "", encoding="utf-8")
+
+        annotated_pdf_bytes = Stage1ODLExtractor._decode_annotated_pdf(
+            document.get("annotated_pdf")
         )
-        subprocess.run(
-            [
-                str(doc_python),
-                "-c",
-                bridge_code,
-                str(pdf_path),
-                str(output_dir),
-                json.dumps(convert_kwargs),
-            ],
-            check=True,
-        )
+        if annotated_pdf_bytes:
+            (output_dir / f"{pdf_path.stem}_annotated.pdf").write_bytes(annotated_pdf_bytes)
 
     def run(
         self,
         pdf_path: Path,
         output_dir: Path,
-        use_hybrid_docling_fast: bool = False,
+        hybrid_mode: str = "off",
         hybrid_url: str = "",
     ) -> Stage1Result:
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        convert_kwargs = {"format": "json,html,markdown,pdf"}
-        if use_hybrid_docling_fast:
-            convert_kwargs["hybrid"] = "docling-fast"
-            convert_kwargs["hybrid_mode"] = "full"
-            if hybrid_url:
-                convert_kwargs["hybrid_url"] = hybrid_url
-
         start = time.perf_counter()
-        if opendataloader_pdf is not None:
-            opendataloader_pdf.convert(
-                input_path=str(pdf_path),
-                output_dir=str(output_dir),
-                **convert_kwargs,
-            )
-        else:
-            self._convert_with_doc_env(pdf_path, output_dir, convert_kwargs)
+        self._convert_via_gateway(
+            pdf_path=pdf_path,
+            output_dir=output_dir,
+            hybrid_mode=hybrid_mode,
+            hybrid_url=hybrid_url,
+        )
         elapsed = time.perf_counter() - start
 
         json_path = output_dir / f"{pdf_path.stem}.json"

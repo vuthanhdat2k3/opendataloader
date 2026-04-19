@@ -60,6 +60,8 @@ class Stage3HybridOCR:
         self.detector = NativePDFTableDetector(
             angle_threshold=angle_threshold,
             spatial_dist_threshold=spatial_dist_threshold,
+            extract_debug_patches=False,
+            render_scale_max=2,
         )
 
     @staticmethod

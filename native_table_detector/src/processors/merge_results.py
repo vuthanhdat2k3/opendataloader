@@ -339,11 +339,15 @@ def generate_merged_markdown(merged_json: Dict[str, Any]) -> str:
         if not all_cells:
             continue
 
-        col_count = len(all_cells[0])
-        md_parts.append("| " + " | ".join([f"Col {i + 1}" for i in range(col_count)]) + " |")
+        col_count = max(len(row) for row in all_cells)
+        normalized_rows = [row + [""] * (col_count - len(row)) for row in all_cells]
+        header = normalized_rows[0]
+        body = normalized_rows[1:]
+
+        md_parts.append("| " + " | ".join(header) + " |")
         md_parts.append("| " + " | ".join(["---"] * col_count) + " |")
 
-        for row_cells in all_cells:
+        for row_cells in body:
             md_parts.append("| " + " | ".join(row_cells) + " |")
 
         md_parts.append("")

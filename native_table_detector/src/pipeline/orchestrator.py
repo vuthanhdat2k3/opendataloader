@@ -40,7 +40,7 @@ class ProductionPipeline:
         stage1 = self.stage1.run(
             pdf_path=request.pdf_path,
             output_dir=request.output_dir / "stage1_opendataloader",
-            use_hybrid_docling_fast=request.use_hybrid_docling_fast,
+            hybrid_mode=request.hybrid_mode,
             hybrid_url=request.hybrid_url,
         )
         metrics["stage1_sec"] = round(time.perf_counter() - t0, 3)
@@ -70,6 +70,7 @@ class ProductionPipeline:
         t3 = time.perf_counter()
         stage4 = self.stage4.run(
             stage1=stage1,
+            stage2=stage2,
             stage3=stage3,
             output_dir=str(request.output_dir / "stage4_merge"),
         )

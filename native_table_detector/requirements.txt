@@ -4,5 +4,5 @@ opencv-python
 numpy
 pillow
 gradio
-opendataloader-pdf
+requests
 

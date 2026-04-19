@@ -12,7 +12,7 @@ class PipelineRequest:
     angle_threshold: float = 2.0
     overlap_threshold: float = 0.08
     save_debug_artifacts: bool = True
-    use_hybrid_docling_fast: bool = False
+    hybrid_mode: str = "off"  # "off", "full", or "auto"
     hybrid_url: str = ""
 
 
@@ -49,6 +49,8 @@ class RotationDetection:
     matched_bbox: list[float] | None
     detector_obb: dict[str, float] | None
     detector_obb_tight: dict[str, float] | None
+    detector_aabb: list[float] | None = None
+    detector_aabb_tight: list[float] | None = None
 
 
 @dataclass
@@ -90,6 +92,7 @@ class Stage4Result:
     merged_json_path: str
     merged_md_path: str
     tables_replaced: int
+    kids_redacted: int = 0
 
 
 @dataclass

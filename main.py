@@ -1,5 +1,6 @@
-from test import RUNS_DIR_ABS, demo
 import os
+
+from ui.app import RUNS_DIR_ABS, demo
 
 
 def main() -> None:

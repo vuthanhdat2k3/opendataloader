@@ -71,6 +71,7 @@ class Stage2RotationDetector:
         self.detector = NativePDFTableDetector(
             angle_threshold=angle_threshold,
             spatial_dist_threshold=spatial_dist_threshold,
+            extract_debug_patches=False,
         )
 
     def run(
@@ -106,6 +107,8 @@ class Stage2RotationDetector:
                 page_num = page_idx + 1
                 page_result = self.detector.process_page(local_doc[page_idx])
                 for rot in page_result.get("rotated_tables", []):
+                    loose_obb = rot.get("obb_loose") or rot.get("obb")
+                    tight_obb = rot.get("obb_tight")
                     matched_odl, overlap_score, match_mode = _match_detector_table_with_odl_boxes(
                         rot,
                         odl_tables_by_page.get(page_num, []),
@@ -125,8 +128,10 @@ class Stage2RotationDetector:
                             match_mode=match_mode,
                             matched_table_id=matched_odl.get("id") if matched_odl else None,
                             matched_bbox=matched_odl.get("bbox") if matched_odl else None,
-                            detector_obb=(rot.get("obb_loose") or rot.get("obb")),
-                            detector_obb_tight=rot.get("obb_tight"),
+                            detector_obb=loose_obb,
+                            detector_obb_tight=tight_obb,
+                            detector_aabb=_obb_to_aabb(loose_obb) if loose_obb else None,
+                            detector_aabb_tight=_obb_to_aabb(tight_obb) if tight_obb else None,
                         )
                     )
                     detection_counter += 1
@@ -160,6 +165,8 @@ class Stage2RotationDetector:
                             "matched_bbox": d.matched_bbox,
                             "detector_obb": d.detector_obb,
                             "detector_obb_tight": d.detector_obb_tight,
+                            "detector_aabb": d.detector_aabb,
+                            "detector_aabb_tight": d.detector_aabb_tight,
                         }
                         for d in detections
                     ],

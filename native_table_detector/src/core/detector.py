@@ -10,11 +10,20 @@ except Exception:
 
 
 class NativePDFTableDetector:
-    def __init__(self, angle_threshold=2.0, spatial_dist_threshold=100):
+    def __init__(
+        self,
+        angle_threshold=2.0,
+        spatial_dist_threshold=100,
+        *,
+        extract_debug_patches: bool = False,
+        render_scale_max: int = 2,
+    ):
         # Bỏ qua rotation < 2° (noise)
         self.angle_threshold = angle_threshold
         # Khoảng cách không gian (pixels) để gom các text nghiêng thành 1 bảng
         self.spatial_dist_threshold = spatial_dist_threshold
+        self.extract_debug_patches = bool(extract_debug_patches)
+        self.render_scale_max = int(render_scale_max) if int(render_scale_max) >= 1 else 1
         self._orientation_predictor = None
         self._orientation_predictor_failed = False
 
@@ -56,10 +65,13 @@ class NativePDFTableDetector:
                     padding=0,
                 )
                 
-                # Render và cắt crop kéo thẳng
-                patch_before, patch_after = self._extract_cells_from_rotated(
-                    page, obb_loose, angle
-                )
+                patch_before = None
+                patch_after = None
+                if self.extract_debug_patches:
+                    # Render và cắt crop kéo thẳng (debug only; expensive)
+                    patch_before, patch_after = self._extract_cells_from_rotated(
+                        page, obb_loose, angle
+                    )
                 
                 results["rotated_tables"].append({
                     # Backward-compatible alias: keep obb as OCR crop box.
@@ -263,18 +275,37 @@ class NativePDFTableDetector:
             "angle": angle_deg
         }
 
+    def _choose_render_scale(self, obb: dict) -> int:
+        """
+        Pick a render scale based on the crop size to reduce expensive high-res renders.
+        Scale 2 helps small tables; scale 1 is usually enough for large crops.
+        """
+        try:
+            w = float(obb.get("w", 0.0))
+            h = float(obb.get("h", 0.0))
+        except Exception:
+            return 1
+        # Heuristic thresholds in PDF points. Tune as needed.
+        max_side = max(w, h)
+        if max_side <= 220:
+            return min(2, self.render_scale_max)
+        if max_side <= 420:
+            return min(2, self.render_scale_max)
+        return 1
+
     def _extract_cells_from_rotated(self, page, obb, angle_deg):
-        mat = fitz.Matrix(2, 2)
+        scale = self._choose_render_scale(obb)
+        mat = fitz.Matrix(scale, scale)
         pix = page.get_pixmap(matrix=mat)
         img = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width, pix.n)
         
         if pix.n == 4:
             img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
             
-        cx = obb["cx"] * 2
-        cy = obb["cy"] * 2
-        w  = obb["w"]  * 2
-        h  = obb["h"]  * 2
+        cx = obb["cx"] * scale
+        cy = obb["cy"] * scale
+        w  = obb["w"]  * scale
+        h  = obb["h"]  * scale
 
         def warp_with_ccw_angle(ccw_angle_deg):
             # Khi xoay ảnh, để box chứa được toàn bộ table thì ta phải tính toán lại kích thước
