@@ -5,7 +5,7 @@ from typing import Dict
 import cv2
 import numpy as np
 
-from native_table_detector.src.processors.hybrid_processor import (
+from src.processors.hybrid_processor import (
     HybridTableProcessor,
     export_results_to_json,
     generate_markdown_from_hybrid_results,

@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from native_table_detector.src.pipeline.orchestrator import run_pipeline
+from src.pipeline.orchestrator import run_pipeline
 
 
 def main() -> None:

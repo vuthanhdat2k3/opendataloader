@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import shutil
-import time
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -181,7 +180,7 @@ def process_documents(
         try:
             name, downloaded = _download_url_to_run_dir(url, run_dir)
             work_items.append((name, downloaded))
-        except Exception as exc:
+        except Exception:
             work_items.append((url, Path()))
 
     status_rows: list[str] = []

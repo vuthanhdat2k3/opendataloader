@@ -3,9 +3,9 @@ from __future__ import annotations
 import time
 from pathlib import Path
 
-from native_table_detector.src.pipeline.config import PipelineConfig
-from native_table_detector.src.pipeline.contracts import PipelineRequest, PipelineResult
-from native_table_detector.src.pipeline.factory import PipelineFactory
+from src.pipeline.config import PipelineConfig
+from src.pipeline.contracts import PipelineRequest, PipelineResult
+from src.pipeline.factory import PipelineFactory
 
 
 _GLOBAL_PIPELINE = None

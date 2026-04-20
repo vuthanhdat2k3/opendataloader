@@ -16,6 +16,7 @@ models/
 output/
 results/
 data/
+skills/
 native_table_detector/output/
 native_table_detector/data/raw/
 native_table_detector/data/sample/

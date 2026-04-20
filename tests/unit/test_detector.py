@@ -7,7 +7,7 @@ import cv2
 import fitz
 import numpy as np
 
-from native_table_detector.src.core.detector import NativePDFTableDetector
+from src.core.detector import NativePDFTableDetector
 
 
 def _resolve_pdf_path(cli_pdf: str | None) -> Path:
