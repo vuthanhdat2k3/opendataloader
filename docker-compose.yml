@@ -23,5 +23,5 @@ services:
       - ./models:/models
       # Persist outputs.
       - ./output:/app/output
-    command: ["uv", "run", "python", "test.py"]
+    command: ["uv", "run", "python", "main.py"]
 
